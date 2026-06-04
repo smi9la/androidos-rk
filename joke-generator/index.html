@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Joke Generator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="joke-generator">
+            <!-- Header -->
+            <div class="header">
+                <h1>😂 Random Joke Generator</h1>
+                <p>Get a laugh in just one click!</p>
+            </div>
+
+            <!-- Joke Display Area -->
+            <div class="joke-box">
+                <div id="joke-content" class="joke-content">
+                    <p class="joke-placeholder">Click "Get Joke" to load a funny joke...</p>
+                </div>
+                
+                <!-- Loading Spinner -->
+                <div id="loading" class="loading hidden">
+                    <div class="spinner"></div>
+                    <p>Loading joke...</p>
+                </div>
+
+                <!-- Error Message -->
+                <div id="error" class="error hidden">
+                    <p id="error-message">Something went wrong. Please try again.</p>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="get-joke-btn" class="btn btn-primary">🎭 Get Joke</button>
+                <button id="copy-btn" class="btn btn-secondary" disabled>📋 Copy</button>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Jokes Loaded:</span>
+                    <span id="joke-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">API:</span>
+                    <span id="api-name" class="stat-value">JokeAPI</span>
+                </div>
+            </div>
+
+            <!-- API Selection -->
+            <div class="api-selector">
+                <label for="api-select">Select API:</label>
+                <select id="api-select">
+                    <option value="jokeapi">JokeAPI (Recommended)</option>
+                    <option value="official">Official Joke API</option>
+                </select>
+            </div>
+
+            <!-- Joke Type Selection (for JokeAPI) -->
+            <div id="joke-type-selector" class="joke-type-selector">
+                <label for="joke-type">Joke Type:</label>
+                <select id="joke-type">
+                    <option value="any">Any</option>
+                    <option value="general">General</option>
+                    <option value="programming">Programming</option>
+                    <option value="knock-knock">Knock-Knock</option>
+                </select>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>Made with ❤️ | <a href="docs/API.md">API Docs</a> | <a href="https://github.com/smi9la/joke-generator">GitHub</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
