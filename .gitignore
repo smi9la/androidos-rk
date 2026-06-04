@@ -1,0 +1,39 @@
+# Build artifacts
+build/
+dist/
+*.o
+*.a
+*.so
+*.elf
+
+# Buildroot
+output/
+buildroot-*/
+
+# Images
+*.img
+*.iso
+*.bin
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+.cache/
+
+# Temporary
+*.tmp
+*.bak
