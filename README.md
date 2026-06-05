@@ -1,97 +1,97 @@
-# R36s Smart System - ระบบอัจฉริยะสำหรับ R36s และโทรศัพท์
+# R36s Smart System - Advanced Mobile Device Controller
 
 ![R36s Smart System](https://img.shields.io/badge/version-2.0.0-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Platform](https://img.shields.io/badge/platform-Android%20Phone%20%7C%20R36s%20Device-orange)
 
-> **ระบบควบคุมอัจฉริยะสำหรับอุปกรณ์ R36s พกพา พร้อมแอปพลิเคชันโทรศัพท์**
+> **Powerful remote control system for R36s portable devices with Android phone controller app**
 
 ---
 
-## 🎯 ภาพรวม
+## Overview
 
-**R36s Smart System** เป็นแพลตฟอร์มควบคุมที่ทรงพลังสำหรับอุปกรณ์ R36s แบบพกพา พร้อมแอปพลิเคชันช่วยเหลือบนโทรศัพท์ Android ให้คุณจัดการอุปกรณ์ได้จากที่ไหนก็ได้
-
----
-
-## ✨ คุณสมบัติหลัก
-
-- 🎮 **ระบบควบคุมแบบเรียลไทม์** - ควบคุม R36s จากโทรศัพท์
-- 📱 **แอปพลิเคชันโทรศัพท์ Android** - อินเตอร์เฟสที่สวยงาม
-- ⚙️ **ตั้งค่าอุปกรณ์** - การกำหนดค่าแบบสมบูรณ์ของ R36s
-- 🔄 **ซิงค์ข้อมูล** - ซิงค์อัตโนมัติระหว่างอุปกรณ์
-- 📊 **การวิเคราะห์ประสิทธิภาพ** - ติดตามสถานะอุปกรณ์
-- 💾 **จัดเก็บข้อมูลในเครื่อง** - ไม่มีการเชื่อมต่อคลาวด์ที่จำเป็น
-- 🚀 **เร็วและเบา** - การใช้ทรัพยากรต่ำ
+**R36s Smart System** is an advanced control platform for R36s portable devices. Manage and monitor your R36s from your Android phone with real-time Bluetooth connectivity.
 
 ---
 
-## 📥 การดาวน์โหลดและติดตั้ง
+## Key Features
 
-### 📱 Android Phone App
+- 🎮 **Real-time Device Control** - Control R36s from your phone
+- 📱 **Android Phone Controller** - Beautiful interface for device management
+- ⚙️ **Device Configuration** - Complete R36s system setup
+- 🔄 **Data Synchronization** - Automatic sync between devices
+- 📊 **Performance Analytics** - Monitor device status
+- 💾 **Local Storage** - No cloud connection required
+- 🚀 **Fast & Lightweight** - Low resource usage
+
+---
+
+## Downloads
+
+### Android Phone App
 ```bash
 https://github.com/smi9la/androidos-rk/releases/download/v2.0.0/r36s-controller-2.0.0.apk
 ```
 
-### 🎮 R36s Device Firmware
+### R36s Device Firmware
 ```bash
 https://github.com/smi9la/androidos-rk/releases/download/v2.0.0/r36s-firmware-2.0.0.bin
 ```
 
 ---
 
-## 🚀 เริ่มต้นอย่างรวดเร็ว
+## Quick Start
 
-### ติดตั้งแอปโทรศัพท์
-1. ดาวน์โหลด `r36s-controller-2.0.0.apk`
-2. โอนไฟล์ไปยังโทรศัพท์
-3. เปิดจากตัวจัดการไฟล์
-4. อนุญาตการติดตั้ง
+### Install Phone App
+1. Download `r36s-controller-2.0.0.apk`
+2. Transfer file to your phone
+3. Open file manager and tap to install
+4. Grant necessary permissions
 
-### ติดตั้ง R36s Firmware
-1. ดาวน์โหลด `r36s-firmware-2.0.0.bin`
-2. เชื่อมต่อ R36s กับคอมพิวเตอร์
-3. ใช้เครื่องมือเฟิร์มแวร์เพื่อปรับปรุง
-4. รีบูต R36s
+### Install R36s Firmware
+1. Download `r36s-firmware-2.0.0.bin`
+2. Connect R36s to your computer
+3. Run firmware installation tool
+4. Reboot R36s device
 
 ---
 
-## 📋 ข้อกำหนดของระบบ
+## System Requirements
 
-| ส่วนประกอบ | ขั้นต่ำ | แนะนำ |
-|---------|----------|----------|
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
 | Android Phone | 6.0 API 23 | 10+ |
 | R36s Device | V1.0 | V2.0+ |
 | Storage | 100 MB | 500 MB |
 
 ---
 
-## 🔧 สถาปัตยกรรมระบบ
+## System Architecture
 
 ```
-┌─────────────────────┐
-│  Android Phone      │
-│  (Controller App)   │
-└──────────┬──────────┘
-           │ Bluetooth/WiFi
-           │
-┌──────────▼──────────┐
-│   R36s Device       │
-│  (Main System)      │
-└─────────────────────┘
+┌──────────────────────┐
+│  Android Phone       │
+│  (Controller App)    │
+└──────────────┬───────┘
+               │ Bluetooth/WiFi
+               │
+┌──────────────▼───────┐
+│   R36s Device        │
+│  (Main System)       │
+└──────────────────────┘
 ```
 
 ---
 
-## 📚 เอกสารประกอบ
+## Documentation
 
-- [แนวทางการติดตั้ง](INSTALLATION.md)
-- [คู่มือผู้ใช้](USER_GUIDE.md)
+- [Installation Guide](INSTALLATION.md)
+- [User Guide](USER_GUIDE.md)
 - [API Reference](API.md)
 
 ---
 
-## 💻 ความต้องการในการพัฒนา
+## Development Requirements
 
 - Node.js 14+
 - Java 8+
@@ -101,62 +101,62 @@ https://github.com/smi9la/androidos-rk/releases/download/v2.0.0/r36s-firmware-2.
 
 ---
 
-## 🔧 การสร้างจากซอร์สโค้ด
+## Building from Source
 
 ```bash
-# ติดตั้งการพึ่งพา
+# Install dependencies
 pip3 install -r requirements.txt
 npm install
 
-# สร้างทั้งหมด
+# Build all components
 python3 BUILD_ALL.py
 
-# หรือสร้างแพลตฟอร์มแยกต่างหาก
+# Or build platforms separately
 cd phone && ./gradlew build  # Android
 cd ../r36s && make build    # R36s Device
 ```
 
 ---
 
-## 📊 สถิติ
+## Statistics
 
-- **เวอร์ชัน**: 1 (R36s Controller)
-- **ฟีเจอร์**: 12+
-- **บรรทัดโค้ด**: 5000+
-- **ไฟล์**: 20+
-
----
-
-## 🐛 รายงานปัญหา
-
-พบปัญหา? [บอกเราที่นี่](https://github.com/smi9la/androidos-rk/issues)
+- **Version**: 2.0.0 (R36s Controller)
+- **Features**: 12+
+- **Lines of Code**: 5000+
+- **Files**: 20+
 
 ---
 
-## 💡 คำขอใหม่
+## Bug Reports
 
-มีไอเดีย? [แบ่งปันที่นี่](https://github.com/smi9la/androidos-rk/discussions)
-
----
-
-## 📄 ลิขสิทธิ์
-
-MIT License - สำหรับทุกคน
+Found an issue? [Report it here](https://github.com/smi9la/androidos-rk/issues)
 
 ---
 
-## 👨‍💻 นักพัฒนา
+## Feature Requests
 
-**smi9la** - นักเขียนโปรแกรมและนักประดิษฐ์
-
----
-
-## 🙏 ขอบคุณ
-
-ขอบคุณที่ใช้ **R36s Smart System**! 🎮✨
+Have a great idea? [Share it here](https://github.com/smi9la/androidos-rk/discussions)
 
 ---
 
-**เวอร์ชัน**: v2.0.0
-**วันที่เปิดตัว**: 2026-06-05
-**สถานะ**: ✅ พร้อมใช้งาน
+## License
+
+MIT License - Available for everyone
+
+---
+
+## Developer
+
+**smi9la** - Software developer and innovator
+
+---
+
+## Credits
+
+Thank you for using **R36s Smart System**! 🎮✨
+
+---
+
+**Version**: v2.0.0
+**Release Date**: 2026-06-05
+**Status**: ✅ Ready for use
