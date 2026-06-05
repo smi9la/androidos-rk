@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-AndroidOS Clock - Complete Build System
-PC (EXE) + Mobile (APK) + Software Package (r36s)
+R36s Smart System - Complete Build System
+Android Phone Controller + R36s Device Firmware
 All-in-one configuration and build automation
 """
 
@@ -14,263 +14,12 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 
-VERSION = "1.0.0"
-APP_NAME = "androidos-clock"
+VERSION = "2.0.0"
+APP_NAME = "r36s-controller"
 BUILD_DATE = datetime.now().strftime("%Y-%m-%d")
 
 # ============================================================================
-# 1. PC (WINDOWS EXE) CONFIGURATION
-# ============================================================================
-
-PC_PACKAGE_JSON = {
-    "name": "androidos-clock-pc",
-    "version": VERSION,
-    "description": "Multi-Timezone Digital Clock for PC",
-    "main": "main.js",
-    "homepage": "./",
-    "scripts": {
-        "react-start": "react-scripts start",
-        "react-build": "react-scripts build",
-        "electron-start": "electron .",
-        "electron-dev": "concurrently \"npm run react-start\" \"wait-on http://localhost:3000 && electron .\"",
-        "build": "npm run react-build && electron-builder --win --publish=never"
-    },
-    "dependencies": {
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-scripts": "5.0.1"
-    },
-    "devDependencies": {
-        "concurrently": "^7.6.0",
-        "electron": "^27.0.0",
-        "electron-builder": "^24.6.4",
-        "wait-on": "^7.0.1"
-    },
-    "build": {
-        "appId": "com.androidos.clock.pc",
-        "productName": "AndroidOS Clock",
-        "files": ["build/**/*", "main.js", "preload.js"],
-        "win": {
-            "target": ["nsis", "portable"],
-            "certificateFile": None
-        },
-        "nsis": {
-            "oneClick": False,
-            "allowToChangeInstallationDirectory": True,
-            "createDesktopShortcut": True
-        }
-    }
-}
-
-PC_MAIN_JS = """const { app, BrowserWindow, Menu } = require('electron');
-const path = require('path');
-const isDev = require('electron-is-dev');
-
-let mainWindow;
-
-function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1200, height: 800,
-    webPreferences: { nodeIntegration: false, contextIsolation: true }
-  });
-
-  const startUrl = isDev ? 'http://localhost:3000' 
-    : `file://${path.join(__dirname, '../build/index.html')}`;
-
-  mainWindow.loadURL(startUrl);
-  if (isDev) mainWindow.webContents.openDevTools();
-  mainWindow.on('closed', () => { mainWindow = null; });
-}
-
-app.on('ready', createWindow);
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
-app.on('activate', () => { if (mainWindow === null) createWindow(); });
-
-const template = [
-  {
-    label: 'File',
-    submenu: [{ label: 'Exit', accelerator: 'CmdOrCtrl+Q', click: () => app.quit() }]
-  },
-  {
-    label: 'View',
-    submenu: [
-      { label: 'Toggle Dev Tools', accelerator: 'CmdOrCtrl+Shift+I', 
-        click: () => mainWindow.webContents.toggleDevTools() }
-    ]
-  }
-];
-
-Menu.setApplicationMenu(Menu.buildFromTemplate(template));
-"""
-
-PC_PRELOAD_JS = """const { contextBridge } = require('electron');
-contextBridge.exposeInMainWorld('electronAPI', {
-  getAppVersion: () => require('../package.json').version
-});
-"""
-
-PC_APP_JS = """import React, { useState, useEffect } from 'react';
-import './App.css';
-
-function App() {
-  const defaultTimezones = ['UTC', 'America/New_York', 'Europe/London', 'Europe/Paris', 
-                           'Asia/Tokyo', 'Asia/Dubai', 'Australia/Sydney', 'America/Los_Angeles'];
-  const [timezones, setTimezones] = useState(defaultTimezones);
-  const [showAddPanel, setShowAddPanel] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const [, setUpdateTrigger] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => setUpdateTrigger(prev => prev + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatTime = (date) => {
-    const h = String(date.getHours()).padStart(2, '0');
-    const m = String(date.getMinutes()).padStart(2, '0');
-    const s = String(date.getSeconds()).padStart(2, '0');
-    return `${h}:${m}:${s}`;
-  };
-
-  const getTimeInTimezone = (tz) => 
-    new Date(new Date().toLocaleString('en-US', { timeZone: tz }));
-
-  const addTimezone = () => {
-    if (inputValue.trim() && !timezones.includes(inputValue.trim())) {
-      try {
-        new Date().toLocaleString('en-US', { timeZone: inputValue.trim() });
-        setTimezones([...timezones, inputValue.trim()]);
-        setInputValue('');
-        setShowAddPanel(false);
-      } catch (e) { alert('Invalid timezone'); }
-    }
-  };
-
-  return (
-    <div className="app-container">
-      <h1 className="title">⏰ Global Time Zones</h1>
-      <div className="clocks-grid">
-        {timezones.map((tz) => {
-          const tzDate = getTimeInTimezone(tz);
-          return (
-            <div key={tz} className="clock-card">
-              <div className="timezone-name">{tz}</div>
-              <div className="digital-time">{formatTime(tzDate)}</div>
-            </div>
-          );
-        })}
-      </div>
-      <div className="controls">
-        <button className="btn" onClick={() => setShowAddPanel(true)}>+ Add</button>
-        <button className="btn" onClick={() => setTimezones(defaultTimezones)}>Reset</button>
-      </div>
-      {showAddPanel && (
-        <div className="add-timezone">
-          <input type="text" placeholder="Timezone" value={inputValue} 
-                 onChange={(e) => setInputValue(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && addTimezone()} />
-          <button className="btn" onClick={addTimezone}>Add</button>
-        </div>
-      )}
-    </div>
-  );
-}
-export default App;
-"""
-
-PC_APP_CSS = """.app-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.title {
-  color: white;
-  margin-bottom: 40px;
-  font-size: 2.5em;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.clocks-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  margin-bottom: 30px;
-  max-width: 1200px;
-}
-
-.clock-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.clock-card:hover {
-  transform: translateY(-10px);
-}
-
-.timezone-name {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #667eea;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.digital-time {
-  font-size: 2.5em;
-  font-weight: bold;
-  text-align: center;
-  color: #333;
-  font-family: 'Courier New', monospace;
-}
-
-.controls {
-  text-align: center;
-  margin-top: 30px;
-}
-
-.btn {
-  background: white;
-  color: #667eea;
-  border: none;
-  padding: 12px 30px;
-  font-size: 1em;
-  border-radius: 25px;
-  cursor: pointer;
-  margin: 0 10px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  background: #667eea;
-  color: white;
-}
-
-.add-timezone {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.timezone-input {
-  padding: 10px 15px;
-  border: 2px solid white;
-  border-radius: 25px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
-}
-"""
-
-# ============================================================================
-# 2. MOBILE (ANDROID APK) CONFIGURATION
+# 1. ANDROID PHONE CONTROLLER CONFIGURATION
 # ============================================================================
 
 ANDROID_BUILD_GRADLE = """apply plugin: 'com.android.application'
@@ -278,11 +27,11 @@ ANDROID_BUILD_GRADLE = """apply plugin: 'com.android.application'
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.androidos.clock.mobile"
-        minSdkVersion 21
+        applicationId "com.r36s.controller"
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode 1
-        versionName "1.0.0"
+        versionName "2.0.0"
     }
     buildTypes {
         release {
@@ -301,7 +50,12 @@ dependencies {
 
 ANDROID_MANIFEST = """<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.androidos.clock.mobile">
+    package="com.r36s.controller">
+    
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     
     <application
         android:allowBackup="true"
@@ -321,61 +75,53 @@ ANDROID_MANIFEST = """<?xml version="1.0" encoding="utf-8"?>
 </manifest>
 """
 
-ANDROID_MAIN_ACTIVITY = """package com.androidos.clock.mobile;
+ANDROID_MAIN_ACTIVITY = """package com.r36s.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.LinearLayout;
+import android.widget.Button;
 import android.widget.TextView;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
-    private String[] timezones = {"UTC", "America/New_York", "Europe/London", 
-                                  "Europe/Paris", "Asia/Tokyo", "Asia/Dubai", 
-                                  "Australia/Sydney", "America/Los_Angeles"};
+    private BluetoothAdapter bluetoothAdapter;
+    private TextView statusView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        LinearLayout grid = findViewById(R.id.clocksGrid);
+        statusView = findViewById(R.id.statusView);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         
-        for (String tz : timezones) {
-            TextView clockView = new TextView(this);
-            clockView.setText(getFormattedTime(tz));
-            clockView.setTextSize(24);
-            grid.addView(clockView);
-        }
+        Button scanButton = findViewById(R.id.scanButton);
+        scanButton.setOnClickListener(v -> scanForDevices());
         
-        Thread updateThread = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(1000);
-                    runOnUiThread(() -> {
-                        LinearLayout g = findViewById(R.id.clocksGrid);
-                        g.removeAllViews();
-                        for (String tz : timezones) {
-                            TextView v = new TextView(MainActivity.this);
-                            v.setText(getFormattedTime(tz));
-                            v.setTextSize(24);
-                            g.addView(v);
-                        }
-                    });
-                } catch (InterruptedException e) { e.printStackTrace(); }
-            }
-        });
-        updateThread.setDaemon(true);
-        updateThread.start();
+        updateStatus();
     }
 
-    private String getFormattedTime(String tz) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
-        sdf.setTimeZone(TimeZone.getTimeZone(tz));
-        return tz + ": " + sdf.format(new Date());
+    private void scanForDevices() {
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        StringBuilder devices = new StringBuilder("Found devices:\\n");
+        
+        for (BluetoothDevice device : pairedDevices) {
+            devices.append(device.getName()).append(" (").append(device.getAddress()).append(")\\n");
+        }
+        
+        statusView.setText(devices.toString());
+    }
+
+    private void updateStatus() {
+        if (bluetoothAdapter == null) {
+            statusView.setText("Bluetooth not supported");
+        } else if (bluetoothAdapter.isEnabled()) {
+            statusView.setText("Bluetooth enabled. Ready to connect to R36s.");
+        } else {
+            statusView.setText("Bluetooth disabled. Enable to continue.");
+        }
     }
 }
 """
@@ -385,24 +131,39 @@ ANDROID_LAYOUT = """<?xml version="1.0" encoding="utf-8"?>
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#f5f5f5">
+    android:padding="20dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="⏰ Global Time Zones"
+        android:text="🎮 R36s Smart Controller"
         android:textSize="28sp"
         android:textStyle="bold"
         android:gravity="center"
         android:padding="20dp" />
+
+    <TextView
+        android:id="@+id/statusView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Initializing..."
+        android:textSize="16sp"
+        android:padding="20dp" />
+
+    <Button
+        android:id="@+id/scanButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Scan for R36s Devices"
+        android:textSize="18sp"
+        android:padding="15dp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         
         <LinearLayout
-            android:id="@+id/clocksGrid"
+            android:id="@+id/devicesGrid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -412,44 +173,143 @@ ANDROID_LAYOUT = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 # ============================================================================
-# 3. BUILD FUNCTIONS
+# 2. R36S DEVICE FIRMWARE CONFIGURATION
 # ============================================================================
 
-def create_pc_files():
-    """Create all PC/Electron files"""
-    print("🖥️  Creating PC (Electron) files...")
-    
-    pc_path = Path("pc")
-    pc_path.mkdir(exist_ok=True)
-    
-    # Package.json
-    with open(pc_path / "package.json", 'w') as f:
-        json.dump(PC_PACKAGE_JSON, f, indent=2)
-    
-    # Main files
-    with open(pc_path / "main.js", 'w') as f:
-        f.write(PC_MAIN_JS)
-    
-    with open(pc_path / "preload.js", 'w') as f:
-        f.write(PC_PRELOAD_JS)
-    
-    with open(pc_path / "App.js", 'w') as f:
-        f.write(PC_APP_JS)
-    
-    with open(pc_path / "App.css", 'w') as f:
-        f.write(PC_APP_CSS)
-    
-    print("  ✓ PC files created")
+R36S_MAIN_C = """#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "r36s_config.h"
+#include "bluetooth.h"
+#include "display.h"
+#include "power.h"
 
-def create_mobile_files():
-    """Create all Android files"""
-    print("📱 Creating Mobile (Android) files...")
+// R36s Smart System Main Firmware v2.0.0
+
+#define VERSION "2.0.0"
+#define DEVICE_NAME "R36s_Smart"
+
+typedef struct {
+    char version[16];
+    uint8_t status;
+    uint16_t battery;
+    uint32_t uptime;
+} system_info_t;
+
+system_info_t sys_info = {
+    .version = VERSION,
+    .status = 0x01,  // RUNNING
+    .battery = 100,
+    .uptime = 0
+};
+
+void init_device() {
+    printf("Initializing R36s Smart System v%s\\n", VERSION);
     
-    android_path = Path("mobile/android/app/src/main")
+    // Initialize display
+    display_init();
+    display_print("R36s Smart v2.0.0");
+    
+    // Initialize Bluetooth
+    bluetooth_init();
+    bluetooth_set_name(DEVICE_NAME);
+    
+    // Initialize power management
+    power_init();
+    
+    printf("Initialization complete\\n");
+}
+
+void handle_bluetooth_command(const char* cmd) {
+    if (strcmp(cmd, "STATUS") == 0) {
+        printf("Status: Battery=%d%%, Uptime=%d\\n", 
+               sys_info.battery, sys_info.uptime);
+    }
+    else if (strcmp(cmd, "POWER_OFF") == 0) {
+        power_shutdown();
+    }
+    else if (strcmp(cmd, "REBOOT") == 0) {
+        power_reboot();
+    }
+}
+
+int main() {
+    init_device();
+    
+    while (1) {
+        char cmd[256];
+        if (bluetooth_receive(cmd, sizeof(cmd)) > 0) {
+            handle_bluetooth_command(cmd);
+        }
+        
+        // Update system info
+        sys_info.uptime++;
+        display_update();
+        
+        // Sleep 100ms
+        usleep(100000);
+    }
+    
+    return 0;
+}
+"""
+
+R36S_BLUETOOTH_H = """#ifndef R36S_BLUETOOTH_H
+#define R36S_BLUETOOTH_H
+
+#include <stdint.h>
+
+typedef struct {
+    char name[32];
+    uint8_t address[6];
+    int8_t rssi;
+} bt_device_t;
+
+void bluetooth_init(void);
+void bluetooth_set_name(const char* name);
+int bluetooth_receive(char* buffer, int size);
+int bluetooth_send(const char* data, int size);
+void bluetooth_scan(void);
+
+#endif
+"""
+
+R36S_CONFIG_H = """#ifndef R36S_CONFIG_H
+#define R36S_CONFIG_H
+
+// R36s Device Configuration
+
+#define R36S_VERSION "2.0.0"
+#define DEVICE_TYPE_R36S 0x36
+
+// Display settings
+#define DISPLAY_WIDTH 320
+#define DISPLAY_HEIGHT 240
+#define DISPLAY_FPS 60
+
+// Bluetooth settings
+#define BLE_MTU 512
+#define BLE_TIMEOUT 5000
+
+// Power settings
+#define BATTERY_THRESHOLD 10
+#define POWER_TIMEOUT 900  // 15 minutes
+
+// Storage
+#define FLASH_SIZE (16 * 1024 * 1024)  // 16 MB
+
+#endif
+"""
+
+def create_android_files():
+    """Create all Android phone controller files"""
+    print("📱 Creating Android Phone Controller files...")
+    
+    android_path = Path("phone/android/app/src/main")
     android_path.mkdir(parents=True, exist_ok=True)
     
     # Build gradle
-    with open(Path("mobile/android/app/build.gradle"), 'w') as f:
+    with open(Path("phone/android/app/build.gradle"), 'w') as f:
         f.write(ANDROID_BUILD_GRADLE)
     
     # Manifest
@@ -457,7 +317,7 @@ def create_mobile_files():
         f.write(ANDROID_MANIFEST)
     
     # Java files
-    java_path = android_path / "java/com/androidos/clock/mobile"
+    java_path = android_path / "java/com/r36s/controller"
     java_path.mkdir(parents=True, exist_ok=True)
     
     with open(java_path / "MainActivity.java", 'w') as f:
@@ -470,51 +330,92 @@ def create_mobile_files():
     with open(layout_path / "activity_main.xml", 'w') as f:
         f.write(ANDROID_LAYOUT)
     
-    print("  ✓ Mobile files created")
+    print("  ✓ Android phone controller files created")
+
+def create_r36s_firmware():
+    """Create R36s device firmware files"""
+    print("🎮 Creating R36s Device Firmware files...")
+    
+    firmware_path = Path("r36s/firmware/src")
+    firmware_path.mkdir(parents=True, exist_ok=True)
+    
+    # Main firmware
+    with open(firmware_path / "main.c", 'w') as f:
+        f.write(R36S_MAIN_C)
+    
+    # Header files
+    header_path = firmware_path.parent / "include"
+    header_path.mkdir(exist_ok=True)
+    
+    with open(header_path / "bluetooth.h", 'w') as f:
+        f.write(R36S_BLUETOOTH_H)
+    
+    with open(header_path / "r36s_config.h", 'w') as f:
+        f.write(R36S_CONFIG_H)
+    
+    # CMakeLists for building
+    with open(Path("r36s/CMakeLists.txt"), 'w') as f:
+        f.write("""cmake_minimum_required(VERSION 3.10)
+project(r36s-firmware)
+
+set(CMAKE_C_STANDARD 11)
+
+add_executable(r36s-firmware
+    firmware/src/main.c
+)
+
+target_include_directories(r36s-firmware PRIVATE
+    firmware/include
+)
+""")
+    
+    print("  ✓ R36s device firmware files created")
 
 def create_software_package():
     """Create complete software package"""
-    print("📦 Creating Software Package (r36s)...")
+    print("📦 Creating Software Package (R36s Smart System)...")
     
-    pkg_path = Path(f"androidos-clock-software-{VERSION}")
+    pkg_path = Path(f"r36s-smart-system-{VERSION}")
     
     # Create directories
-    (pkg_path / "PC" / "Installer").mkdir(parents=True, exist_ok=True)
-    (pkg_path / "PC" / "Portable").mkdir(parents=True, exist_ok=True)
-    (pkg_path / "Mobile" / "Release").mkdir(parents=True, exist_ok=True)
+    (pkg_path / "Phone" / "APK").mkdir(parents=True, exist_ok=True)
+    (pkg_path / "Device" / "Firmware").mkdir(parents=True, exist_ok=True)
     (pkg_path / "Documentation").mkdir(parents=True, exist_ok=True)
     (pkg_path / "Scripts").mkdir(parents=True, exist_ok=True)
     
     # Create README
-    readme = f"""# AndroidOS Clock Software Package {VERSION}
+    readme = f"""# R36s Smart System Package {VERSION}
 
 ## 📦 Contents
 
-- **PC/Installer** - Windows installation package
-- **PC/Portable** - Standalone executable
-- **Mobile/Release** - Android APK
-- **Documentation** - User guides and instructions
-- **Scripts** - Installation scripts
+- **Phone/APK** - Android controller application
+- **Device/Firmware** - R36s device firmware
+- **Documentation** - User guides and technical docs
+- **Scripts** - Installation and utility scripts
 
 ## 🚀 Quick Start
 
-### Windows
-Run: `PC/Installer/setup.exe`
+### Android Phone
+1. Install APK: `adb install Phone/APK/r36s-controller-{VERSION}.apk`
+2. Launch the app
+3. Scan for R36s devices
 
-### Android
-Transfer APK to phone and install
+### R36s Device
+1. Connect to USB
+2. Run: `python3 Scripts/flash_firmware.py Device/Firmware/r36s-firmware-{VERSION}.bin`
+3. Power cycle device
 
 ## 📋 Features
 
-✓ Multi-timezone display
-✓ Real-time updates
-✓ Beautiful UI
-✓ Cross-platform support
+✓ Bluetooth control
+✓ Real-time status monitoring
+✓ Device management
+✓ Firmware updates
 
 ## 💻 System Requirements
 
-**Windows:** 7 or higher, 200MB space
-**Android:** 5.0+, 50MB space
+**Phone:** Android 6.0+, Bluetooth 4.2+
+**Device:** R36s V1.0+
 
 ## 📞 Support
 https://github.com/smi9la/androidos-rk
@@ -528,107 +429,43 @@ Version: {VERSION}
     
     # Create metadata
     metadata = {
-        "name": "AndroidOS Clock",
+        "name": "R36s Smart System",
         "version": VERSION,
         "buildDate": BUILD_DATE,
-        "platforms": ["Windows", "Android"],
+        "components": ["Phone Controller", "R36s Firmware"],
         "buildCommands": {
-            "pc": "npm run build (in pc/ directory)",
-            "mobile": "./gradlew assembleRelease (in mobile/ directory)"
+            "phone": "./gradlew assembleRelease (in phone/ directory)",
+            "firmware": "cmake --build . (in r36s/ directory)"
         }
     }
     
     with open(pkg_path / "package.json", 'w') as f:
         json.dump(metadata, f, indent=2)
     
-    # Create build instructions
-    with open(pkg_path / "BUILD.md", 'w') as f:
-        f.write("""# Build Instructions
-
-## PC (Windows EXE)
-cd pc
-npm install
-npm run build
-
-Output: pc/dist/
-
-## Mobile (Android APK)
-cd mobile
-./gradlew assembleRelease
-
-Output: mobile/android/app/build/outputs/apk/release/
-
-## Complete Package
-python3 create_software_package.py
-""")
-    
     print("  ✓ Software package created")
     
     return pkg_path
 
-def create_master_build_script():
-    """Create master build script"""
-    print("🔨 Creating master build script...")
-    
-    build_script = f"""#!/bin/bash
-# AndroidOS Clock - Master Build Script v{VERSION}
-
-echo "======================================"
-echo "AndroidOS Clock Build System"
-echo "Version: {VERSION}"
-echo "======================================"
-echo ""
-
-# Build PC
-echo "🖥️  Building PC (Electron) version..."
-cd pc
-npm install
-npm run build
-cd ..
-
-# Build Mobile
-echo "📱 Building Mobile (Android) version..."
-cd mobile
-./gradlew assembleRelease
-cd ..
-
-# Create package
-echo "📦 Creating software package..."
-python3 create_software_package.py
-
-echo ""
-echo "✅ Build complete!"
-echo "Check pc/dist/ and mobile/android/app/build/outputs/ for outputs"
-"""
-    
-    with open("build.sh", 'w') as f:
-        f.write(build_script)
-    os.chmod("build.sh", 0o755)
-    
-    print("  ✓ Build script created")
-
 def main():
     """Main function"""
     print(f"\n{'='*60}")
-    print(f"AndroidOS Clock - Complete Build System")
+    print(f"R36s Smart System - Complete Build System")
     print(f"Version {VERSION}")
     print(f"{'='*60}\n")
     
     try:
         # Create all files
-        create_pc_files()
-        create_mobile_files()
+        create_android_files()
+        create_r36s_firmware()
         pkg_path = create_software_package()
-        create_master_build_script()
         
         print(f"\n{'='*60}")
         print("✅ All files created successfully!")
         print(f"{'='*60}\n")
         print("Next steps:")
-        print("1. PC Build:   cd pc && npm install && npm run build")
-        print("2. Mobile:    cd mobile && ./gradlew assembleRelease")
-        print("3. Package:   python3 create_software_package.py")
-        print("4. Or run all: bash build.sh")
+        print("1. Phone Build:   cd phone && ./gradlew build")
+        print("2. Firmware:      cd r36s && cmake --build .")
+        print("3. Package:       see created files")
         print("\n🚀 Ready to build!\n")
         
         return 0
