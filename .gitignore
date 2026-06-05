@@ -1,23 +1,24 @@
 # Build artifacts
-build/
-dist/
+*.apk
+*.bin
 *.o
 *.a
 *.so
-*.elf
+*.dylib
 
-# Buildroot
-output/
-buildroot-*/
+# Android
+.gradle/
+build/
+local.properties
+.DS_Store
 
-# Images
-*.img
-*.iso
-*.bin
-
-# Logs
-*.log
-logs/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
 
 # IDE
 .vscode/
@@ -26,14 +27,14 @@ logs/
 *.swo
 *~
 
+# Node
+node_modules/
+npm-debug.log
+
 # OS
 .DS_Store
 Thumbs.db
 
-# Dependencies
-node_modules/
-.cache/
-
-# Temporary
-*.tmp
-*.bak
+# Firmware builds
+r36s/build/
+phone/build/
