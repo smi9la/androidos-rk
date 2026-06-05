@@ -1,0 +1,222 @@
+.app-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+}
+
+.update-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+}
+
+.update-notification.available {
+  background: #4CAF50;
+  color: white;
+}
+
+.update-notification.downloaded {
+  background: #2196F3;
+  color: white;
+}
+
+.install-btn {
+  background: white;
+  color: #2196F3;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.install-btn:hover {
+  background: #f0f0f0;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.title {
+  color: white;
+  margin-bottom: 40px;
+  font-size: 2.5em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.clocks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+  max-width: 1200px;
+}
+
+.clock-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.clock-card:hover {
+  transform: translateY(-10px);
+}
+
+.timezone-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.digital-time {
+  font-size: 2.5em;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  font-family: 'Courier New', monospace;
+}
+
+.controls {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1em;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 0 10px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.add-timezone {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.timezone-input {
+  padding: 10px 15px;
+  border: 2px solid white;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 400px;
+}
+
+.modal h2 {
+  color: #667eea;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+}
+
+.modal p {
+  color: #666;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+}
+
+.modal-btn {
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  padding: 12px 30px;
+  margin: 10px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+  background: #e0e0e0;
+}
+
+.modal-btn.primary {
+  background: #667eea;
+  color: white;
+}
+
+.modal-btn.primary:hover {
+  background: #764ba2;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+  }
+
+  .clocks-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .digital-time {
+    font-size: 2em;
+  }
+
+  .update-notification {
+    right: 10px;
+    left: 10px;
+  }
+}
